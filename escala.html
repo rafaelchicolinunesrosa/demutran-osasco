@@ -26,32 +26,37 @@
 
     <h1>Escala de Fiscalização - DEMUTRAN Osasco</h1>
 
-    <!-- Configuração JSONBin -->
-    <div class="config-section" id="configSection">
-      <h3>
-        <span>⚙️</span>
-        <span>Configuração do Sistema (Primeiro Acesso)</span>
-      </h3>
-      <div class="config-info">
-        <strong>📋 Instruções Rápidas:</strong>
-        <ol>
-          <li>Acesse: <a href="https://jsonbin.io" target="_blank">JSONBin.io</a></li>
-          <li>Crie uma conta gratuita</li>
-          <li>Vá em "API Keys" e copie sua <strong>Master Key</strong></li>
-          <li>Cole a chave abaixo e clique em "Criar Banco de Dados"</li>
-        </ol>
-      </div>
-      
-      <label style="display: block; margin-top: 10px; font-weight: bold;">JSONBin Master Key:</label>
-      <input type="password" id="apiKey" placeholder="$2a$10$xxxxxxxxxxxxxxxxxxxxx">
-      
-      <div>
-        <button type="button" onclick="createDatabase()">🚀 Criar Banco de Dados</button>
-        <button type="button" onclick="testConnection()">🔍 Testar Conexão</button>
-      </div>
-      
-      <div class="status" id="configStatus"></div>
+   <!-- Configuração JSONBin -->
+<div class="config-section" id="configSection">
+  <h3>
+    <span>⚙️</span>
+    <span>Configuração do Sistema (Primeiro Acesso)</span>
+  </h3>
+  <div class="config-info">
+    <strong>📋 Instruções Rápidas:</strong>
+    <ol>
+      <li>Acesse: <a href="https://jsonbin.io" target="_blank">JSONBin.io</a></li>
+      <li>Crie uma conta gratuita</li>
+      <li>Vá em "API Keys" e copie sua <strong>Master Key</strong></li>
+      <li>Cole a chave abaixo e clique em "Criar Banco de Dados"</li>
+    </ol>
+    <div style="background: rgba(255,255,255,0.15); padding: 8px; border-radius: 4px; margin-top: 8px; font-size: 0.85rem;">
+      ⚠️ <strong>IMPORTANTE:</strong> O sistema irá reutilizar o banco existente automaticamente.<br>
+      Seus dados nunca serão perdidos ao atualizar a página!
     </div>
+  </div>
+  
+  <label style="display: block; margin-top: 10px; font-weight: bold;">JSONBin Master Key:</label>
+  <input type="password" id="apiKey" placeholder="$2a$10$xxxxxxxxxxxxxxxxxxxxx">
+  
+  <div>
+    <button type="button" onclick="createDatabase()">🚀 Criar/Configurar Banco</button>
+    <button type="button" onclick="testConnection()">🔍 Testar Conexão</button>
+    <button type="button" onclick="resetConfig()" style="background: #dc3545; color: white;">🔄 Resetar Config</button>
+  </div>
+  
+  <div class="status" id="configStatus"></div>
+</div>
 
     <div class="info-template">
       <strong>💡 Como funciona o sistema:</strong>
@@ -156,3 +161,4 @@
   </script>
 </body>
 </html>
+
