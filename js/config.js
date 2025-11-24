@@ -10,6 +10,7 @@ function loadConfig() {
   const saved = localStorage.getItem(CONFIG_KEY);
   if (saved) {
     CONFIG = JSON.parse(saved);
+    console.log('✅ Configuração carregada:', CONFIG.binId ? 'Bin ID encontrado' : 'Não configurado');
   }
   return CONFIG;
 }
@@ -21,6 +22,7 @@ function saveConfig(apiKey, binId) {
     configured: true
   };
   localStorage.setItem(CONFIG_KEY, JSON.stringify(CONFIG));
+  console.log('✅ Configuração salva com sucesso!');
 }
 
 function showLoading(text = 'Processando...') {
@@ -55,6 +57,35 @@ async function createDatabase() {
     return;
   }
 
+  // ⭐ VERIFICAR SE JÁ EXISTE UM BIN ID SALVO
+  if (CONFIG.configured && CONFIG.binId) {
+    const useExisting = confirm(
+      `⚠️ ATENÇÃO!\n\n` +
+      `Já existe um banco de dados configurado:\n` +
+      `Bin ID: ${CONFIG.binId}\n\n` +
+      `Deseja MANTER este banco (recomendado)?\n\n` +
+      `• SIM = Mantém os dados existentes\n` +
+      `• NÃO = Cria um novo banco (perderá os dados antigos)`
+    );
+
+    if (useExisting) {
+      // Apenas atualizar a API Key se mudou
+      saveConfig(apiKey, CONFIG.binId);
+      showConfigStatus('success', 
+        `✅ Configuração atualizada!\n\n` +
+        `Bin ID mantido: ${CONFIG.binId}\n` +
+        `Seus dados estão preservados!`
+      );
+      
+      setTimeout(() => {
+        document.getElementById('configSection').style.display = 'none';
+      }, 3000);
+      
+      return;
+    }
+  }
+
+  // Criar novo banco apenas se não existir ou usuário escolheu criar novo
   showLoading('Criando banco de dados...');
 
   try {
@@ -83,11 +114,17 @@ async function createDatabase() {
       
       saveConfig(apiKey, binId);
       
-      showConfigStatus('success', `✅ Banco de dados criado com sucesso!\n\nBin ID: ${binId}\n\nSistema configurado e pronto para uso!`);
+      showConfigStatus('success', 
+        `✅ Banco de dados criado com sucesso!\n\n` +
+        `Bin ID: ${binId}\n\n` +
+        `⚠️ IMPORTANTE: Anote este Bin ID!\n` +
+        `Ele será usado automaticamente nas próximas sessões.\n\n` +
+        `Sistema configurado e pronto para uso!`
+      );
       
       setTimeout(() => {
         document.getElementById('configSection').style.display = 'none';
-      }, 4000);
+      }, 6000);
     } else {
       let errorMsg = 'Erro desconhecido';
       try {
@@ -96,7 +133,12 @@ async function createDatabase() {
       } catch (e) {
         errorMsg = responseText;
       }
-      showConfigStatus('error', `❌ Erro ao criar banco:\n\nStatus: ${response.status}\nMensagem: ${errorMsg}`);
+      showConfigStatus('error', 
+        `❌ Erro ao criar banco:\n\n` +
+        `Status: ${response.status}\n` +
+        `Mensagem: ${errorMsg}\n\n` +
+        `Verifique se a API Key está correta.`
+      );
     }
   } catch (error) {
     hideLoading();
@@ -106,7 +148,7 @@ async function createDatabase() {
 
 async function testConnection() {
   if (!CONFIG.configured || !CONFIG.binId) {
-    showConfigStatus('error', '❌ Crie o banco de dados primeiro!');
+    showConfigStatus('error', '❌ Configure o banco de dados primeiro!');
     return;
   }
 
@@ -124,12 +166,37 @@ async function testConnection() {
     if (response.ok) {
       const result = await response.json();
       const count = result.record.escalas ? result.record.escalas.length : 0;
-      showConfigStatus('success', `✅ Conexão OK!\n\nBin ID: ${CONFIG.binId}\nEscalas salvas: ${count}`);
+      showConfigStatus('success', 
+        `✅ Conexão OK!\n\n` +
+        `Bin ID: ${CONFIG.binId}\n` +
+        `Escalas salvas: ${count}\n` +
+        `Última atualização: ${result.record.lastUpdate || 'N/A'}`
+      );
     } else {
-      showConfigStatus('error', `❌ Erro ao conectar:\n\nStatus: ${response.status}`);
+      showConfigStatus('error', 
+        `❌ Erro ao conectar:\n\n` +
+        `Status: ${response.status}\n\n` +
+        `Verifique se a API Key está correta.`
+      );
     }
   } catch (error) {
     hideLoading();
     showConfigStatus('error', `❌ Erro de conexão:\n\n${error.message}`);
+  }
+}
+
+// ⭐ FUNÇÃO PARA RESETAR CONFIGURAÇÃO (uso administrativo)
+function resetConfig() {
+  if (confirm(
+    '⚠️ ATENÇÃO: AÇÃO IRREVERSÍVEL!\n\n' +
+    'Isso irá APAGAR a configuração local.\n' +
+    'Os dados no JSONBin NÃO serão perdidos,\n' +
+    'mas você precisará reconfigurar o sistema.\n\n' +
+    'Deseja continuar?'
+  )) {
+    localStorage.removeItem(CONFIG_KEY);
+    CONFIG = { apiKey: '', binId: '', configured: false };
+    alert('✅ Configuração resetada!\n\nRecarregue a página para reconfigurar.');
+    location.reload();
   }
 }
