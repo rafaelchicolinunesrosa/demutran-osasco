@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - DEMUTRAN Osasco</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="login-page">
+  <div class="login-container">
+    <div class="login-header">
+      <h1>🚔 DEMUTRAN Osasco</h1>
+      <p>Sistema de Gestão de Escalas</p>
+    </div>
+    
+    <div class="login-form">
+      <div class="error-message" id="loginError"></div>
+      
+      <div class="form-group">
+        <label for="username">👤 Usuário</label>
+        <input type="text" id="username" placeholder="Digite seu usuário" value="demutran">
+      </div>
+      
+      <div class="form-group">
+        <label for="password">🔒 Senha</label>
+        <input type="password" id="password" placeholder="Digite sua senha" value="osasco2025">
+      </div>
+      
+      <button type="button" class="login-btn" id="loginBtn">Entrar</button>
+      
+      <div class="login-info">
+        <strong>💡 Credenciais de teste:</strong><br>
+        Usuário: <code>demutran</code><br>
+        Senha: <code>osasco2025</code>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+</body>
+</html>

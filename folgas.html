@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Folgas - DEMUTRAN Osasco</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="module-page">
+  <div class="module-container">
+    <a href="menu.html" class="back-btn">← Voltar ao Menu</a>
+    
+    <div class="module-content">
+      <h1>🏖️ Módulo de Folgas</h1>
+      <p>Este módulo está em desenvolvimento.</p>
+      <p>Aqui você poderá gerenciar as folgas dos agentes de trânsito.</p>
+      
+      <div class="coming-soon">
+        <div class="icon">🚧</div>
+        <h3>Em Breve</h3>
+        <ul>
+          <li>Cadastro de folgas por agente</li>
+          <li>Calendário visual de folgas</li>
+          <li>Relatórios de folgas programadas</li>
+          <li>Histórico de folgas</li>
+          <li>Exportação para Excel/PDF</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    // Verificar autenticação
+    if (!isAuthenticated()) {
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>

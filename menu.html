@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Menu - DEMUTRAN Osasco</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="menu-page">
+  <div class="modules-container">
+    <div class="modules-header">
+      <h1>Bem-vindo ao Sistema</h1>
+      <p>Selecione o módulo que deseja acessar</p>
+    </div>
+    
+    <div class="modules-grid">
+      <a href="escala.html" class="module-card">
+        <div class="icon">📋</div>
+        <h3>Escalas</h3>
+        <p>Gerenciar escalas de fiscalização</p>
+      </a>
+      
+      <a href="folgas.html" class="module-card">
+        <div class="icon">🏖️</div>
+        <h3>Folgas</h3>
+        <p>Controle de folgas dos agentes</p>
+      </a>
+      
+      <a href="ferias.html" class="module-card">
+        <div class="icon">✈️</div>
+        <h3>Férias</h3>
+        <p>Gestão de férias programadas</p>
+      </a>
+    </div>
+    
+    <button class="logout-btn" id="logoutBtn">🚪 Sair do Sistema</button>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    // Verificar se está autenticado
+    if (!isAuthenticated()) {
+      window.location.href = 'index.html';
+    }
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+      if (confirm('Deseja realmente sair do sistema?')) {
+        logout();
+        window.location.href = 'index.html';
+      }
+    });
+  </script>
+</body>
+</html>
