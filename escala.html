@@ -26,37 +26,88 @@
 
     <h1>Escala de Fiscalização - DEMUTRAN Osasco</h1>
 
-   <!-- Configuração JSONBin -->
+<!-- Configuração JSONBin -->
 <div class="config-section" id="configSection">
   <h3>
     <span>⚙️</span>
-    <span>Configuração do Sistema (Primeiro Acesso)</span>
+    <span id="configTitle">Sistema Configurado pelo Administrador</span>
   </h3>
-  <div class="config-info">
-    <strong>📋 Instruções Rápidas:</strong>
-    <ol>
+  
+  <div class="config-info" id="configInfoUser" style="display: none;">
+    <strong>✅ Configuração Centralizada Ativa</strong>
+    <p style="margin-top: 10px;">
+      O administrador já configurou o sistema.<br>
+      Todas as escalas são salvas no mesmo banco de dados.<br>
+      Você pode começar a usar imediatamente!
+    </p>
+    <button type="button" onclick="testConnection()" style="margin-top: 15px;">
+      🔍 Testar Conexão
+    </button>
+  </div>
+
+  <div class="config-info" id="configInfoAdmin">
+    <strong>🔧 Área do Administrador - Configuração Inicial</strong>
+    <ol style="margin-top: 10px;">
       <li>Acesse: <a href="https://jsonbin.io" target="_blank">JSONBin.io</a></li>
       <li>Crie uma conta gratuita</li>
       <li>Vá em "API Keys" e copie sua <strong>Master Key</strong></li>
       <li>Cole a chave abaixo e clique em "Criar Banco de Dados"</li>
+      <li><strong style="color: #ffeb3b;">Após criar, copie o Bin ID exibido</strong></li>
+      <li>Abra o arquivo <code>js/config.js</code> e cole:
+        <ul style="margin-top: 5px;">
+          <li>Sua Master Key na linha <code>apiKey:</code></li>
+          <li>O Bin ID na linha <code>binId:</code></li>
+          <li>Mude <code>configured: false</code> para <code>configured: true</code></li>
+        </ul>
+      </li>
+      <li>Salve o arquivo e recarregue a página</li>
     </ol>
-    <div style="background: rgba(255,255,255,0.15); padding: 8px; border-radius: 4px; margin-top: 8px; font-size: 0.85rem;">
-      ⚠️ <strong>IMPORTANTE:</strong> O sistema irá reutilizar o banco existente automaticamente.<br>
-      Seus dados nunca serão perdidos ao atualizar a página!
+    <div style="background: rgba(255,255,255,0.15); padding: 8px; border-radius: 4px; margin-top: 10px; font-size: 0.85rem;">
+      ⚠️ <strong>IMPORTANTE:</strong> Após configurar, todos os supervisores usarão automaticamente o mesmo banco de dados. Não será necessário configurar em cada computador!
     </div>
   </div>
   
-  <label style="display: block; margin-top: 10px; font-weight: bold;">JSONBin Master Key:</label>
-  <input type="password" id="apiKey" placeholder="$2a$10$xxxxxxxxxxxxxxxxxxxxx">
-  
-  <div>
-    <button type="button" onclick="createDatabase()">🚀 Criar/Configurar Banco</button>
-    <button type="button" onclick="testConnection()">🔍 Testar Conexão</button>
-    <button type="button" onclick="resetConfig()" style="background: #dc3545; color: white;">🔄 Resetar Config</button>
+  <div id="configInputs">
+    <label style="display: block; margin-top: 10px; font-weight: bold;">JSONBin Master Key:</label>
+    <input type="password" id="apiKey" placeholder="$2a$10$xxxxxxxxxxxxxxxxxxxxx">
+    
+    <div style="margin-top: 10px;">
+      <button type="button" onclick="createDatabase()">🚀 Criar Banco de Dados</button>
+      <button type="button" onclick="testConnection()">🔍 Testar Conexão</button>
+    </div>
   </div>
   
   <div class="status" id="configStatus"></div>
 </div>
+
+<script>
+  // Verificar se está usando configuração centralizada
+  window.addEventListener('load', function() {
+    loadConfig();
+    
+    if (CONFIG.configured && CONFIG.apiKey && CONFIG.binId && 
+        CONFIG.apiKey !== '$2a$10$COLE_SUA_MASTER_KEY_AQUI' && 
+        CONFIG.binId !== 'COLE_SEU_BIN_ID_AQUI') {
+      // Configuração centralizada ativa - ocultar para usuários
+      document.getElementById('configTitle').textContent = '✅ Sistema Configurado';
+      document.getElementById('configInfoAdmin').style.display = 'none';
+      document.getElementById('configInputs').style.display = 'none';
+      document.getElementById('configInfoUser').style.display = 'block';
+      
+      // Ocultar seção após 3 segundos
+      setTimeout(() => {
+        document.getElementById('configSection').style.display = 'none';
+      }, 3000);
+    } else {
+      // Modo administrador - mostrar configuração
+      document.getElementById('configTitle').textContent = '⚙️ Configuração Inicial (Administrador)';
+      document.getElementById('configInfoUser').style.display = 'none';
+      document.getElementById('configInfoAdmin').style.display = 'block';
+      document.getElementById('configInputs').style.display = 'block';
+    }
+  });
+</script>
+
 
     <div class="info-template">
       <strong>💡 Como funciona o sistema:</strong>
@@ -161,4 +212,5 @@
   </script>
 </body>
 </html>
+
 
