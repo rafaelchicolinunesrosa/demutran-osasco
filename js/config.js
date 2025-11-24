@@ -1,16 +1,28 @@
-const CONFIG_KEY = 'demutran_jsonbin_config_v4';
-
-let CONFIG = {
-  apiKey: '',
-  binId: '',
-  configured: false
+// ========== CONFIGURAÇÃO CENTRALIZADA ==========
+// ⚠️ ATENÇÃO ADMINISTRADOR: Configure sua Master Key aqui uma única vez
+const CENTRAL_CONFIG = {
+  apiKey: '$2a$10$vgfrAI6lgj5R0fSHzxhFDemJRBzc4fONGjcygtAvBtaRd3Y3251FO',  // ← COLE SUA MASTER KEY AQUI
+  binId: '6923def143b1c97be9c13215',              // ← COLE SEU BIN ID AQUI (após criar o banco)
+  configured: true  // Mude para true após configurar
 };
 
+
+const CONFIG_KEY = 'demutran_jsonbin_config_v4';
+let CONFIG = { ...CENTRAL_CONFIG };
+
 function loadConfig() {
+  // Se já está configurado centralmente, usar essa configuração
+  if (CENTRAL_CONFIG.configured && CENTRAL_CONFIG.apiKey && CENTRAL_CONFIG.binId) {
+    CONFIG = { ...CENTRAL_CONFIG };
+    console.log('✅ Usando configuração centralizada do administrador');
+    return CONFIG;
+  }
+
+  // Caso contrário, tentar carregar do localStorage (modo antigo)
   const saved = localStorage.getItem(CONFIG_KEY);
   if (saved) {
     CONFIG = JSON.parse(saved);
-    console.log('✅ Configuração carregada:', CONFIG.binId ? 'Bin ID encontrado' : 'Não configurado');
+    console.log('✅ Configuração carregada do localStorage');
   }
   return CONFIG;
 }
@@ -57,7 +69,7 @@ async function createDatabase() {
     return;
   }
 
-  // ⭐ VERIFICAR SE JÁ EXISTE UM BIN ID SALVO
+  // Verificar se já existe configuração
   if (CONFIG.configured && CONFIG.binId) {
     const useExisting = confirm(
       `⚠️ ATENÇÃO!\n\n` +
@@ -69,7 +81,6 @@ async function createDatabase() {
     );
 
     if (useExisting) {
-      // Apenas atualizar a API Key se mudou
       saveConfig(apiKey, CONFIG.binId);
       showConfigStatus('success', 
         `✅ Configuração atualizada!\n\n` +
@@ -85,7 +96,6 @@ async function createDatabase() {
     }
   }
 
-  // Criar novo banco apenas se não existir ou usuário escolheu criar novo
   showLoading('Criando banco de dados...');
 
   try {
@@ -117,14 +127,16 @@ async function createDatabase() {
       showConfigStatus('success', 
         `✅ Banco de dados criado com sucesso!\n\n` +
         `Bin ID: ${binId}\n\n` +
-        `⚠️ IMPORTANTE: Anote este Bin ID!\n` +
-        `Ele será usado automaticamente nas próximas sessões.\n\n` +
-        `Sistema configurado e pronto para uso!`
+        `⚠️ IMPORTANTE PARA O ADMINISTRADOR:\n` +
+        `Copie este Bin ID e cole no arquivo js/config.js\n` +
+        `na linha: binId: '${binId}'\n\n` +
+        `Depois mude configured: true\n\n` +
+        `Assim todos os supervisores usarão o mesmo banco!`
       );
       
       setTimeout(() => {
         document.getElementById('configSection').style.display = 'none';
-      }, 6000);
+      }, 10000);
     } else {
       let errorMsg = 'Erro desconhecido';
       try {
@@ -170,13 +182,14 @@ async function testConnection() {
         `✅ Conexão OK!\n\n` +
         `Bin ID: ${CONFIG.binId}\n` +
         `Escalas salvas: ${count}\n` +
-        `Última atualização: ${result.record.lastUpdate || 'N/A'}`
+        `Última atualização: ${result.record.lastUpdate || 'N/A'}\n\n` +
+        `Sistema funcionando perfeitamente!`
       );
     } else {
       showConfigStatus('error', 
         `❌ Erro ao conectar:\n\n` +
         `Status: ${response.status}\n\n` +
-        `Verifique se a API Key está correta.`
+        `Verifique se a API Key e Bin ID estão corretos.`
       );
     }
   } catch (error) {
@@ -185,7 +198,7 @@ async function testConnection() {
   }
 }
 
-// ⭐ FUNÇÃO PARA RESETAR CONFIGURAÇÃO (uso administrativo)
+// Função para resetar configuração (uso administrativo)
 function resetConfig() {
   if (confirm(
     '⚠️ ATENÇÃO: AÇÃO IRREVERSÍVEL!\n\n' +
