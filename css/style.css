@@ -123,21 +123,6 @@ body {
   75% { transform: translateX(10px); }
 }
 
-.login-info {
-  margin-top: 15px;
-  padding: 10px;
-  background: #f0f8ff;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  color: #004080;
-}
-
-.login-info code {
-  background: white;
-  padding: 2px 6px;
-  border-radius: 3px;
-  font-family: monospace;
-}
 
 /* ========== PÁGINA DE MENU ========== */
 .menu-page {
@@ -371,3 +356,4 @@ body {
 .coming-soon li:last-child {
   border-bottom: none;
 }
+
