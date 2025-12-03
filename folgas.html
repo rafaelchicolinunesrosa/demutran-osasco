@@ -1,40 +1,207 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Folgas - DEMUTRAN Osasco</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Folgas - DEMUTRAN Osasco</title>
+    <link rel="stylesheet" href="css/folgas.css">
 </head>
-<body class="module-page">
-  <div class="module-container">
-    <a href="menu.html" class="back-btn">← Voltar ao Menu</a>
-    
-    <div class="module-content">
-      <h1>🏖️ Módulo de Folgas</h1>
-      <p>Este módulo está em desenvolvimento.</p>
-      <p>Aqui você poderá gerenciar as folgas dos agentes de trânsito.</p>
-      
-      <div class="coming-soon">
-        <div class="icon">🚧</div>
-        <h3>Em Breve</h3>
-        <ul>
-          <li>Cadastro de folgas por agente</li>
-          <li>Calendário visual de folgas</li>
-          <li>Relatórios de folgas programadas</li>
-          <li>Histórico de folgas</li>
-          <li>Exportação para Excel/PDF</li>
-        </ul>
-      </div>
-    </div>
-  </div>
+<body>
+    <div class="container">
+        <!-- CABEÇALHO -->
+        <header class="header">
+            <div class="header-content">
+                <h1>📅 Gestão de Folgas</h1>
+                <button class="btn-voltar" onclick="voltarIndex()">← Voltar</button>
+            </div>
+        </header>
 
-  <script src="js/auth.js"></script>
-  <script>
-    // Verificar autenticação
-    if (!isAuthenticated()) {
-      window.location.href = 'index.html';
-    }
-  </script>
+        <!-- FORMULÁRIO DE CADASTRO -->
+        <section class="form-section">
+            <h2>📝 Cadastrar Folga</h2>
+            <form id="folgaForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nomeAgente">Nome do Agente *</label>
+                        <input type="text" id="nomeAgente" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="plantao">Plantão *</label>
+                        <select id="plantao" required>
+                            <option value="">Selecione...</option>
+                            <option value="A">Plantão A</option>
+                            <option value="B">Plantão B</option>
+                            <option value="C">Plantão C</option>
+                            <option value="D">Plantão D</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="escalaAgente">Escala *</label>
+                        <select id="escalaAgente" required>
+                            <option value="">Selecione...</option>
+                            <option value="12x36_06-18">12x36 - 06:00 às 18:00</option>
+                            <option value="12x36_08-20">12x36 - 08:00 às 20:00</option>
+                            <option value="12x36_10-22">12x36 - 10:00 às 22:00</option>
+                            <option value="12x36_18-06">12x36 - 18:00 às 06:00</option>
+                            <option value="12x36_19-07">12x36 - 19:00 às 07:00</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group checkbox-group">
+                        <label>
+                            <input type="checkbox" id="emFerias">
+                            <span>Agente em Férias</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- CAMPOS DE FÉRIAS -->
+                <div id="feriasFields" style="display: none;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dataInicioFerias">Data Início Férias</label>
+                            <input type="date" id="dataInicioFerias">
+                        </div>
+                        <div class="form-group">
+                            <label for="dataFimFerias">Data Fim Férias</label>
+                            <input type="date" id="dataFimFerias">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CAMPOS DE FOLGAS NORMAIS -->
+                <div id="folgasFields">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dataFolga1">Data da Folga 1 *</label>
+                            <input type="date" id="dataFolga1">
+                        </div>
+                        <div class="form-group">
+                            <label for="dataFolga2">Data da Folga 2</label>
+                            <input type="date" id="dataFolga2">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary">✅ Cadastrar Folga</button>
+            </form>
+        </section>
+
+        <!-- FILTROS -->
+        <section class="filtros-section">
+            <h2>🔍 Filtros</h2>
+            <div class="filtros-container">
+                <div class="form-group">
+                    <label for="filtroPlantao">Plantão</label>
+                    <select id="filtroPlantao" onchange="aplicarFiltros()">
+                        <option value="">Todos</option>
+                        <option value="A">Plantão A</option>
+                        <option value="B">Plantão B</option>
+                        <option value="C">Plantão C</option>
+                        <option value="D">Plantão D</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="filtroEscala">Escala</label>
+                    <select id="filtroEscala" onchange="aplicarFiltros()">
+                        <option value="">Todas</option>
+                        <option value="12x36_06-18">06:00 às 18:00</option>
+                        <option value="12x36_08-20">08:00 às 20:00</option>
+                        <option value="12x36_10-22">10:00 às 22:00</option>
+                        <option value="12x36_18-06">18:00 às 06:00</option>
+                        <option value="12x36_19-07">19:00 às 07:00</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="filtroTipo">Tipo</label>
+                    <select id="filtroTipo" onchange="aplicarFiltros()">
+                        <option value="">Todos</option>
+                        <option value="folga-normal">Folga Normal</option>
+                        <option value="ferias">Férias</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- CALENDÁRIO -->
+        <section class="calendario-section">
+            <div class="calendario-header">
+                <button class="btn-nav" onclick="mesAnterior()">◀</button>
+                <h2 id="mesAnoAtual">Dezembro 2024</h2>
+                <button class="btn-nav" onclick="proximoMes()">▶</button>
+                <button class="btn-hoje" onclick="mesAtual()">Hoje</button>
+                <button class="btn-pdf" onclick="abrirModalPDF()">📄 Gerar PDF</button>
+            </div>
+            <div id="calendario" class="calendario-grid"></div>
+        </section>
+
+        <!-- LISTA DE FOLGAS -->
+        <section class="lista-section">
+            <h2>📋 Folgas Cadastradas</h2>
+            <div id="folgasPorDia"></div>
+        </section>
+    </div>
+
+    <!-- MODAL PDF -->
+    <div id="modalPDF" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📄 Gerar PDF de Folgas</h2>
+                <span class="close" onclick="fecharModalPDF()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="pdfPlantao">Plantão *</label>
+                    <select id="pdfPlantao" required>
+                        <option value="">Selecione o plantão...</option>
+                        <option value="A">Plantão A</option>
+                        <option value="B">Plantão B</option>
+                        <option value="C">Plantão C</option>
+                        <option value="D">Plantão D</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="pdfMes">Mês</label>
+                    <select id="pdfMes">
+                        <option value="">Mês Atual</option>
+                        <option value="0">Janeiro</option>
+                        <option value="1">Fevereiro</option>
+                        <option value="2">Março</option>
+                        <option value="3">Abril</option>
+                        <option value="4">Maio</option>
+                        <option value="5">Junho</option>
+                        <option value="6">Julho</option>
+                        <option value="7">Agosto</option>
+                        <option value="8">Setembro</option>
+                        <option value="9">Outubro</option>
+                        <option value="10">Novembro</option>
+                        <option value="11">Dezembro</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="pdfAno">Ano</label>
+                    <input type="number" id="pdfAno" min="2020" max="2030" value="2025">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="fecharModalPDF()">Cancelar</button>
+                <button class="btn-primary" onclick="gerarPDFPlantao()">📄 Gerar PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="js/config.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="js/folgas.js"></script>
 </body>
 </html>
