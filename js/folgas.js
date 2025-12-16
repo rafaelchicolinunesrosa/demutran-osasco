@@ -74,9 +74,11 @@ async function carregarFolgas() {
             esconderLoading();
             renderizarCalendario();
             renderizarListaFolgas();
+            carregando = false;
             return;
         }
 
+        // Verificar API Key
         if (!CONFIG_FOLGAS.apiKey || CONFIG_FOLGAS.apiKey === 'SUA_API_KEY_AQUI') {
             console.error('❌ API Key não configurada!');
             alert('ERRO: Configure sua API Key do JSONBin.io no arquivo config.js');
@@ -84,45 +86,67 @@ async function carregarFolgas() {
             esconderLoading();
             renderizarCalendario();
             renderizarListaFolgas();
+            carregando = false;
             return;
         }
 
+        // Verificar Bin ID
         if (!CONFIG_FOLGAS.binId || CONFIG_FOLGAS.binId === '' || CONFIG_FOLGAS.binId === 'SUA_BIN_ID_FOLGAS_AQUI') {
             console.log('⚠️ Bin ID de folgas não configurado. Criando novo bin...');
             esconderLoading();
-            await criarNovoBinFolgas();
-            carregando = false;
-            renderizarCalendario();
-            renderizarListaFolgas();
+            
+            // Criar bin automaticamente
+            const novoBinId = await criarNovoBinFolgas();
+            if (novoBinId) {
+                CONFIG_FOLGAS.binId = novoBinId;
+                CONFIG_FOLGAS.configured = true;
+                
+                // Tentar carregar novamente
+                folgas = [];
+                carregando = false;
+                renderizarCalendario();
+                renderizarListaFolgas();
+            }
             return;
         }
 
         console.log('📥 Carregando folgas do Bin:', CONFIG_FOLGAS.binId);
+        
         const response = await fetch(
-            `${JSONBIN_CONFIG_FOLGAS.baseUrl}/b/${CONFIG_FOLGAS.binId}/latest`,
+            `https://api.jsonbin.io/v3/b/${CONFIG_FOLGAS.binId}/latest`,
             {
                 method: 'GET',
-                headers: getJSONBinHeadersFolgas()
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Master-Key': CONFIG_FOLGAS.apiKey
+                }
             }
         );
 
         if (response.ok) {
             const data = await response.json();
-            folgas = data.record.folgas || data.record || [];
+            
+            // Verificar estrutura dos dados
+            if (data.record && data.record.folgas) {
+                folgas = data.record.folgas;
+            } else if (Array.isArray(data.record)) {
+                folgas = data.record;
+            } else {
+                folgas = [];
+            }
+            
             console.log(`✅ ${folgas.length} folgas carregadas com sucesso`);
         } else if (response.status === 404) {
             console.log('⚠️ Bin de folgas não encontrado. Criando novo...');
             esconderLoading();
             await criarNovoBinFolgas();
-            carregando = false;
-            renderizarCalendario();
-            renderizarListaFolgas();
-            return;
+            folgas = [];
         } else {
             throw new Error(`Erro HTTP: ${response.status}`);
         }
     } catch (error) {
         console.error('❌ Erro ao carregar folgas:', error);
+        alert('Erro ao carregar folgas: ' + error.message);
         folgas = [];
     } finally {
         carregando = false;
@@ -131,6 +155,7 @@ async function carregarFolgas() {
         renderizarListaFolgas();
     }
 }
+
 
 // ==================== JSONBIN.IO - CRIAR BIN ====================
 async function criarNovoBinFolgas() {
@@ -882,3 +907,17 @@ function obterEscalaCompleta(escala) {
     };
     return escalas[escala] || escala;
 }
+
+// ==================== FUNÇÃO DE DEBUG ====================
+function verificarConfiguracao() {
+    console.log('🔍 Verificando configuração de folgas:');
+    console.log('CONFIG_FOLGAS:', CONFIG_FOLGAS);
+    console.log('API Key configurada:', CONFIG_FOLGAS.apiKey ? '✅ Sim' : '❌ Não');
+    console.log('Bin ID configurado:', CONFIG_FOLGAS.binId ? '✅ Sim' : '❌ Não');
+    console.log('Sistema configurado:', CONFIG_FOLGAS.configured ? '✅ Sim' : '❌ Não');
+}
+
+// Chamar ao carregar a página
+window.addEventListener('load', function() {
+    verificarConfiguracao();
+});
