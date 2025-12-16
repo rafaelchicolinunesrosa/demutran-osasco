@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Escalas - DEMUTRAN Osasco</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/escala.css">
+</head>
+<body class="escala-page">
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <div id="loadingText">Processando...</div>
+    </div>
+  </div>
+
+  <div class="escala-container">
+    <a href="menu.html" class="back-btn">← Voltar ao Menu</a>
+    
+    <div class="logos">
+      <img src="logos/Logo demutran osasco.png" alt="Logo DEMUTRAN Osasco" onerror="this.style.display='none'">
+      <img src="logos/logo agente de transito.png" alt="Logo Agente de Trânsito" onerror="this.style.display='none'">
+    </div>
+
+    <h1>Escala de Fiscalização - DEMUTRAN Osasco</h1>
+
+<!-- Configuração JSONBin -->
+<div class="config-section" id="configSection">
+  <h3>
+    <span>⚙️</span>
+    <span id="configTitle">Sistema Configurado pelo Administrador</span>
+  </h3>
+  
+  <div class="config-info" id="configInfoUser" style="display: none;">
+    <strong>✅ Configuração Centralizada Ativa</strong>
+    <p style="margin-top: 10px;">
+      O administrador já configurou o sistema.<br>
+      Todas as escalas são salvas no mesmo banco de dados.<br>
+      Você pode começar a usar imediatamente!
+    </p>
+    <button type="button" onclick="testConnection()" style="margin-top: 15px;">
+      🔍 Testar Conexão
+    </button>
+  </div>
+
+  <div class="config-info" id="configInfoAdmin">
+    <strong>🔧 Área do Administrador - Configuração Inicial</strong>
+    <ol style="margin-top: 10px;">
+      <li>Acesse: <a href="https://jsonbin.io" target="_blank">JSONBin.io</a></li>
+      <li>Crie uma conta gratuita</li>
+      <li>Vá em "API Keys" e copie sua <strong>Master Key</strong></li>
+      <li>Cole a chave abaixo e clique em "Criar Banco de Dados"</li>
+      <li><strong style="color: #ffeb3b;">Após criar, copie o Bin ID exibido</strong></li>
+      <li>Abra o arquivo <code>js/config.js</code> e cole:
+        <ul style="margin-top: 5px;">
+          <li>Sua Master Key na linha <code>apiKey:</code></li>
+          <li>O Bin ID na linha <code>binId:</code></li>
+          <li>Mude <code>configured: false</code> para <code>configured: true</code></li>
+        </ul>
+      </li>
+      <li>Salve o arquivo e recarregue a página</li>
+    </ol>
+    <div style="background: rgba(255,255,255,0.15); padding: 8px; border-radius: 4px; margin-top: 10px; font-size: 0.85rem;">
+      ⚠️ <strong>IMPORTANTE:</strong> Após configurar, todos os supervisores usarão automaticamente o mesmo banco de dados. Não será necessário configurar em cada computador!
+    </div>
+  </div>
+  
+  <div id="configInputs">
+    <label style="display: block; margin-top: 10px; font-weight: bold;">JSONBin Master Key:</label>
+    <input type="password" id="apiKey" placeholder="$2a$10$xxxxxxxxxxxxxxxxxxxxx">
+    
+    <div style="margin-top: 10px;">
+      <button type="button" onclick="createDatabase()">🚀 Criar Banco de Dados</button>
+      <button type="button" onclick="testConnection()">🔍 Testar Conexão</button>
+    </div>
+  </div>
+  
+  <div class="status" id="configStatus"></div>
+</div>
+
+<script>
+  // Verificar se está usando configuração centralizada
+  window.addEventListener('load', function() {
+    loadConfig();
+    
+    if (CONFIG.configured && CONFIG.apiKey && CONFIG.binId && 
+        CONFIG.apiKey !== '$2a$10$COLE_SUA_MASTER_KEY_AQUI' && 
+        CONFIG.binId !== 'COLE_SEU_BIN_ID_AQUI') {
+      // Configuração centralizada ativa - ocultar para usuários
+      document.getElementById('configTitle').textContent = '✅ Sistema Configurado';
+      document.getElementById('configInfoAdmin').style.display = 'none';
+      document.getElementById('configInputs').style.display = 'none';
+      document.getElementById('configInfoUser').style.display = 'block';
+      
+      // Ocultar seção após 3 segundos
+      setTimeout(() => {
+        document.getElementById('configSection').style.display = 'none';
+      }, 3000);
+    } else {
+      // Modo administrador - mostrar configuração
+      document.getElementById('configTitle').textContent = '⚙️ Configuração Inicial (Administrador)';
+      document.getElementById('configInfoUser').style.display = 'none';
+      document.getElementById('configInfoAdmin').style.display = 'block';
+      document.getElementById('configInputs').style.display = 'block';
+    }
+  });
+</script>
+
+
+    <div class="info-template">
+      <strong>💡 Como funciona o sistema:</strong>
+      <ul>
+        <li><strong>Múltiplos Plantões no Mesmo Dia:</strong> Cada plantão salva separadamente, sem conflitos.</li>
+        <li><strong>Salvamento em Nuvem:</strong> Dados salvos no JSONBin, acessíveis de qualquer lugar.</li>
+        <li><strong>Gerar PDF:</strong> Use Ctrl+P ou o botão de impressão para salvar como PDF.</li>
+        <li><strong>Busca Inteligente:</strong> Veja todas as escalas salvas por data e plantão.</li>
+      </ul>
+    </div>
+
+    <form id="escalaForm">
+      <div class="dados-gerais">
+        <div>
+          <label for="data">Data:</label>
+          <input type="date" id="data" name="data" required>
+        </div>
+        <div>
+          <label for="diaSemana">Dia da Semana:</label>
+          <select id="diaSemana" name="diaSemana" required>
+            <option value="">Selecione...</option>
+            <option value="Segunda-feira">Segunda-feira</option>
+            <option value="Terça-feira">Terça-feira</option>
+            <option value="Quarta-feira">Quarta-feira</option>
+            <option value="Quinta-feira">Quinta-feira</option>
+            <option value="Sexta-feira">Sexta-feira</option>
+            <option value="Sábado">Sábado</option>
+            <option value="Domingo">Domingo</option>
+          </select>
+        </div>
+        <div>
+          <label for="tipoOperacao">Plantão:</label>
+          <select id="tipoOperacao" name="tipoOperacao" required>
+            <option value="">Selecione...</option>
+            <option value="Plantão A">Plantão A</option>
+            <option value="Plantão B">Plantão B</option>
+            <option value="Plantão C">Plantão C</option>
+            <option value="Plantão D">Plantão D</option>
+          </select>
+        </div>
+        <div>
+          <label for="supervisor">Supervisor do Plantão:</label>
+          <input type="text" id="supervisor" name="supervisor" required>
+        </div>
+      </div>
+
+      <div class="turnos-selector" id="turnosSelector">
+        <div class="turnos-selector-title">Selecionar Turnos para exibir:</div>
+      </div>
+
+      <div id="turnosContainer"></div>
+
+      <div class="observacoes-section">
+        <label for="observacoes"><strong>Observações Gerais:</strong></label><br>
+        <textarea id="observacoes" name="observacoes" class="auto-grow" rows="3" placeholder="Anotações gerais do dia, intercorrências, orientações..."></textarea>
+      </div>
+
+      <div class="assinatura-section">
+        <div class="linha-assinatura">Assinatura</div>
+      </div>
+
+      <div class="btn-actions">
+        <div class="action-group local">
+          <div class="action-title">Templates Locais</div>
+          <div class="action-buttons">
+            <button type="button" class="action-btn" onclick="saveTemplate()">💾 Salvar Template</button>
+            <button type="button" class="action-btn" onclick="loadTemplate()">📂 Carregar Template</button>
+          </div>
+        </div>
+        
+        <div class="action-group cloud">
+          <div class="action-title">☁️ Nuvem (JSONBin)</div>
+          <div class="action-buttons">
+            <button type="button" class="action-btn" onclick="saveToCloud()">💾 Salvar na Nuvem</button>
+            <button type="button" class="action-btn" onclick="loadFromCloud()">📥 Carregar da Nuvem</button>
+            <button type="button" class="action-btn" onclick="listAllScales()">📋 Ver Todas</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="print-section">
+        <button type="button" class="print-btn" onclick="window.print()">
+          🖨️ Imprimir / Salvar PDF (Ctrl+P)
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/escala.js"></script>
+  <script>
+    // Verificar autenticação
+    if (!isAuthenticated()) {
+      window.location.href = 'index.html';
+    }
+
+    // Inicializar sistema
+    window.addEventListener('load', function() {
+      initEscalaSystem();
+    });
+  </script>
+</body>
+</html>
+
+

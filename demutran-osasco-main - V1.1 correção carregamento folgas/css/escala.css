@@ -1,0 +1,509 @@
+/* ========== PÁGINA DE ESCALA ========== */
+.escala-page {
+  background: #f6f6f6;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+.escala-container {
+  background: white;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  max-width: 1400px;
+  margin: 0 auto;
+  animation: slideIn 0.5s ease;
+}
+
+.logos {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 12px;
+}
+
+.logos img { 
+  height: 58px; 
+  object-fit: contain; 
+}
+
+.escala-container h1 { 
+  text-align: center; 
+  font-size: 1.5rem; 
+  margin: 4px 0 8px; 
+  color: #333; 
+}
+
+/* ========== CONFIGURAÇÃO ========== */
+.config-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+  color: white;
+}
+
+.config-section h3 { 
+  margin: 0 0 10px 0; 
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.config-info {
+  background: rgba(255,255,255,0.1); 
+  padding: 10px; 
+  border-radius: 6px; 
+  margin-bottom: 10px; 
+  font-size: 0.9rem;
+}
+
+.config-info ol {
+  margin: 8px 0; 
+  padding-left: 20px;
+}
+
+.config-section input { 
+  width: 100%; 
+  padding: 10px; 
+  margin-top: 8px; 
+  border: none;
+  border-radius: 6px;
+  box-sizing: border-box;
+  font-size: 0.95rem;
+}
+
+.config-section button {
+  background: #fff; 
+  color: #667eea; 
+  border: none; 
+  padding: 10px 20px; 
+  border-radius: 6px;
+  cursor: pointer; 
+  font-size: 0.95rem;
+  font-weight: bold;
+  margin-top: 10px;
+  margin-right: 8px;
+}
+
+.config-section button:hover { 
+  background: #f0f0f0; 
+}
+
+.config-section .status {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 6px;
+  display: none;
+  background: rgba(255,255,255,0.2);
+  white-space: pre-wrap;
+  font-family: monospace;
+  font-size: 0.85rem;
+}
+
+.config-section .status.show { 
+  display: block; 
+}
+
+.config-section a { 
+  color: #fff; 
+  text-decoration: underline; 
+}
+
+/* ========== INFO TEMPLATE ========== */
+.info-template {
+  background: #e7f3ff; 
+  border: 1px solid #0070c0; 
+  border-radius: 8px;
+  padding: 10px 12px; 
+  margin-bottom: 12px; 
+  font-size: 0.90rem;
+}
+
+.info-template strong { 
+  color: #004080; 
+}
+
+.info-template ul { 
+  margin: 6px 0; 
+  padding-left: 20px; 
+}
+
+.info-template li { 
+  margin: 3px 0; 
+}
+
+/* ========== DADOS GERAIS ========== */
+.dados-gerais {
+  display: flex; 
+  gap: 10px; 
+  flex-wrap: wrap; 
+  margin-bottom: 10px; 
+  font-size: 0.95rem;
+}
+
+.dados-gerais > div {
+  flex: 1;
+  min-width: 200px;
+}
+
+.dados-gerais label { 
+  font-weight: bold; 
+  margin-right: 6px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.dados-gerais input, 
+.dados-gerais select { 
+  width: 100%;
+  padding: 6px 8px; 
+  font-size: 0.95rem; 
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* ========== SELETOR DE TURNOS ========== */
+.turnos-selector {
+  background: #f1f6ff; 
+  border: 1px solid #c9dcff; 
+  border-radius: 8px;
+  padding: 8px 10px; 
+  margin-bottom: 10px; 
+  font-size: 0.95rem;
+}
+
+.turnos-selector-title { 
+  font-weight: bold; 
+  color: #004080; 
+  margin-bottom: 8px; 
+}
+
+.turnos-selector label {
+  display: inline-flex; 
+  align-items: center; 
+  gap: 6px; 
+  margin: 4px 8px 4px 0;
+  background: #fff; 
+  border: 1px solid #dde6ff; 
+  border-radius: 6px; 
+  padding: 4px 10px; 
+  user-select: none;
+  cursor: pointer;
+}
+
+.turnos-selector input[type="checkbox"] {
+  cursor: pointer;
+}
+
+/* ========== CONTAINER DE TURNOS ========== */
+#turnosContainer { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 14px; 
+  align-items: start; 
+  margin-bottom: 10px;
+}
+
+.turno-card { 
+  border: 1px solid #eee; 
+  border-radius: 10px; 
+  padding: 10px; 
+  background: #fcfcff; 
+}
+
+.turno-title { 
+  font-size: 1.02rem; 
+  margin-bottom: 6px; 
+  color: #004080; 
+  font-weight: bold; 
+}
+
+/* ========== TABELAS ========== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 6px;
+  background: #fafafa;
+  font-size: 0.9rem;
+  table-layout: fixed;
+}
+
+th, td {
+  border: 1px solid #cfcfe6;
+  padding: 4px 3px;
+  text-align: left;
+  vertical-align: top;
+  word-wrap: break-word;
+  line-height: 1.2;
+}
+
+th { 
+  background: #eef0ff; 
+  font-weight: 600; 
+}
+
+th.col-viatura, td.col-viatura { width: 60px; }
+th.col-36, td.col-36 { width: 72px; }
+th.col-agentes, td.col-agentes { width: 130px; }
+th.col-os, td.col-os { width: auto; }
+th.col-acao, td.col-acao { width: 64px; }
+
+td input[type="text"], 
+td textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #cfcfe6;
+  background: #fff;
+  padding: 4px;
+  resize: none;
+  min-height: 24px;
+  font-size: 0.9rem;
+  line-height: 1.2;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+textarea.auto-grow { 
+  overflow: hidden; 
+  min-height: 24px;
+}
+
+/* ========== BOTÕES ========== */
+.add-row-btn {
+  background: #0070c0; 
+  color: #fff; 
+  border: none; 
+  padding: 6px 10px; 
+  border-radius: 5px;
+  cursor: pointer; 
+  font-size: 0.88rem;
+  transition: all 0.3s;
+}
+
+.add-row-btn:hover {
+  background: #005a9e;
+}
+
+.remove-row-btn {
+  background: #c00; 
+  color: #fff; 
+  border: none; 
+  padding: 2px 8px; 
+  border-radius: 5px;
+  cursor: pointer; 
+  font-size: 0.82rem;
+  transition: all 0.3s;
+}
+
+.remove-row-btn:hover {
+  background: #a00;
+}
+
+/* ========== OBSERVAÇÕES ========== */
+.observacoes-section { 
+  margin-top: 10px; 
+  border-top: 2px solid #eee; 
+  padding-top: 8px; 
+}
+
+.observacoes-section textarea {
+  width: 100%;
+  min-height: 70px;
+  padding: 7px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  border: 1px solid #cfcfe6;
+  background: #fff;
+  resize: both;
+}
+
+/* ========== ASSINATURA ========== */
+.assinatura-section { 
+  margin-top: 12px; 
+  border-top: 2px solid #eee; 
+  padding-top: 8px; 
+}
+
+.linha-assinatura {
+  margin: 16px auto 0 auto;
+  width: 40%;
+  border-top: 1px solid #000;
+  text-align: center;
+  padding-top: 4px;
+  font-size: 0.92rem;
+}
+
+/* ========== AÇÕES ========== */
+.btn-actions {
+  display: flex; 
+  gap: 10px; 
+  justify-content: center; 
+  margin: 16px auto 8px auto; 
+  flex-wrap: wrap;
+}
+
+.action-group {
+  flex: 1; 
+  min-width: 280px; 
+  max-width: 50%; 
+  border-radius: 8px; 
+  padding: 10px;
+}
+
+.action-group.local {
+  border: 2px solid #0070c0;
+  background: #f0f8ff;
+}
+
+.action-group.cloud {
+  border: 2px solid #28a745;
+  background: #f0fff4;
+}
+
+.action-title {
+  font-weight: bold; 
+  margin-bottom: 8px; 
+  text-align: center; 
+  font-size: 0.95rem;
+}
+
+.action-group.local .action-title {
+  color: #004080;
+}
+
+.action-group.cloud .action-title {
+  color: #1e7e34;
+}
+
+.action-buttons {
+  display: flex; 
+  gap: 6px; 
+  flex-wrap: wrap; 
+  justify-content: center;
+}
+
+.action-btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  flex: 1;
+  min-width: 110px;
+  color: white;
+  transition: all 0.3s;
+}
+
+.action-group.local .action-btn {
+  background: #0070c0;
+}
+
+.action-group.local .action-btn:hover {
+  background: #005a9e;
+}
+
+.action-group.cloud .action-btn:nth-child(1) {
+  background: #28a745;
+}
+
+.action-group.cloud .action-btn:nth-child(1):hover {
+  background: #218838;
+}
+
+.action-group.cloud .action-btn:nth-child(2) {
+  background: #17a2b8;
+}
+
+.action-group.cloud .action-btn:nth-child(2):hover {
+  background: #138496;
+}
+
+.action-group.cloud .action-btn:nth-child(3) {
+  background: #6c757d;
+}
+
+.action-group.cloud .action-btn:nth-child(3):hover {
+  background: #5a6268;
+}
+
+/* ========== IMPRESSÃO ========== */
+.print-section {
+  display: flex; 
+  gap: 10px; 
+  justify-content: center; 
+  flex-wrap: wrap; 
+  margin: 16px auto 8px;
+}
+
+.print-btn {
+  padding: 12px 24px;
+  background: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.print-btn:hover {
+  background: #c82333;
+  transform: translateY(-2px);
+}
+
+/* ========== RESPONSIVO ========== */
+@media (max-width: 1000px) { 
+  #turnosContainer { 
+    grid-template-columns: 1fr; 
+  }
+  
+  .action-group {
+    max-width: 100%;
+  }
+}
+
+/* ========== IMPRESSÃO ========== */
+@media print {
+  body { 
+    background: white; 
+  }
+  
+  .back-btn, 
+  .config-section, 
+  .info-template, 
+  .turnos-selector,
+  .add-row-btn, 
+  .remove-row-btn, 
+  .btn-actions,
+  .print-section { 
+    display: none !important; 
+  }
+
+  .escala-container {
+    box-shadow: none;
+    max-width: 100%;
+    padding: 10px;
+  }
+
+  #turnosContainer { 
+    grid-template-columns: 1fr 1fr !important; 
+    gap: 4px !important; 
+  }
+
+  table { 
+    font-size: 0.72rem !important; 
+  }
+  
+  th, td { 
+    padding: 1px 2px !important; 
+  }
+  
+  th.col-acao, 
+  td.col-acao { 
+    display: none !important; 
+  }
+}
+
