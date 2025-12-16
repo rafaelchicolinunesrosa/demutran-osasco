@@ -198,10 +198,27 @@
         </div>
     </div>
 
-    <!-- SCRIPTS -->
-    <script src="js/config.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-    <script src="js/folgas.js"></script>
+   <!-- SCRIPTS -->
+<script src="js/config.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+<script src="js/folgas.js"></script>
+
+<script>
+// Garantir que a configuração está carregada
+window.addEventListener('load', function() {
+    console.log('🚀 Iniciando sistema de folgas...');
+    
+    // Verificar configuração
+    if (typeof CONFIG_FOLGAS === 'undefined') {
+        console.error('❌ CONFIG_FOLGAS não definido!');
+        alert('ERRO: Configuração de folgas não encontrada!');
+        return;
+    }
+    
+    // Carregar folgas
+    carregarFolgas();
+});
+</script>
 </body>
 </html>

@@ -8,11 +8,11 @@ const CENTRAL_CONFIG = {
   configured: true
 };
 
-// Configuração para FOLGAS (novo - será criado automaticamente)
+// Configuração para FOLGAS
 const CENTRAL_CONFIG_FOLGAS = {
-  apiKey: '$2a$10$vgfrAI6lgj5R0fSHzxhFDemJRBzc4fONGjcygtAvBtaRd3Y3251FO', // MESMA API Key
-  binId: '692f678743b1c97be9d3aca4',  // Deixe vazio - será preenchido automaticamente
-  configured: true  // Mudará para true após criar o bin
+  apiKey: '$2a$10$vgfrAI6lgj5R0fSHzxhFDemJRBzc4fONGjcygtAvBtaRd3Y3251FO',
+  binId: '692f678743b1c97be9d3aca4', // ✅ COLE SEU BIN ID AQUI
+  configured: true
 };
 
 // ==================== SISTEMA DE CONFIGURAÇÃO ====================
@@ -25,6 +25,7 @@ let CONFIG_FOLGAS = { ...CENTRAL_CONFIG_FOLGAS };
 
 // Carregar configuração de ESCALAS
 function loadConfig() {
+  // Sempre usar a configuração centralizada
   if (CENTRAL_CONFIG.configured && CENTRAL_CONFIG.apiKey && CENTRAL_CONFIG.binId) {
     CONFIG = { ...CENTRAL_CONFIG };
     console.log('✅ Usando configuração centralizada de ESCALAS');
@@ -41,14 +42,15 @@ function loadConfig() {
 
 // Carregar configuração de FOLGAS
 function loadConfigFolgas() {
-  // Primeiro, verificar se já foi configurado centralmente
+  // Sempre usar a configuração centralizada
   if (CENTRAL_CONFIG_FOLGAS.configured && CENTRAL_CONFIG_FOLGAS.binId) {
     CONFIG_FOLGAS = { ...CENTRAL_CONFIG_FOLGAS };
     console.log('✅ Usando configuração centralizada de FOLGAS');
+    console.log('📋 Bin ID de Folgas:', CONFIG_FOLGAS.binId);
     return CONFIG_FOLGAS;
   }
 
-  // Tentar carregar do localStorage
+  // Tentar carregar do localStorage (fallback)
   const saved = localStorage.getItem(CONFIG_KEY_FOLGAS);
   if (saved) {
     CONFIG_FOLGAS = JSON.parse(saved);
@@ -62,7 +64,7 @@ function loadConfigFolgas() {
     binId: '',
     configured: false
   };
-  console.log('⚠️ Configuração de FOLGAS não encontrada - será criada');
+  console.log('⚠️ Configuração de FOLGAS não encontrada');
   return CONFIG_FOLGAS;
 }
 
@@ -80,20 +82,17 @@ function saveConfig(apiKey, binId) {
 // Salvar configuração de FOLGAS
 function saveConfigFolgas(binId) {
   CONFIG_FOLGAS = {
-    apiKey: CENTRAL_CONFIG.apiKey, // Usa a mesma API Key
+    apiKey: CENTRAL_CONFIG.apiKey,
     binId: binId,
     configured: true
   };
   localStorage.setItem(CONFIG_KEY_FOLGAS, JSON.stringify(CONFIG_FOLGAS));
   console.log('✅ Configuração de FOLGAS salva com sucesso!');
   console.log('📋 Bin ID de Folgas:', binId);
-  console.log('⚠️ IMPORTANTE: Adicione este Bin ID no arquivo config.js:');
-  console.log(`CENTRAL_CONFIG_FOLGAS = { binId: '${binId}', configured: true }`);
 }
 
 // ==================== FUNÇÕES DE HEADERS ====================
 
-// Headers para ESCALAS (compatível com código existente)
 function getJSONBinHeaders() {
   return {
     'Content-Type': 'application/json',
@@ -102,7 +101,6 @@ function getJSONBinHeaders() {
   };
 }
 
-// Headers para FOLGAS
 function getJSONBinHeadersFolgas() {
   return {
     'Content-Type': 'application/json',
@@ -111,9 +109,8 @@ function getJSONBinHeadersFolgas() {
   };
 }
 
-// ==================== COMPATIBILIDADE COM JSONBIN_CONFIG ====================
+// ==================== COMPATIBILIDADE ====================
 
-// Para manter compatibilidade com código que usa JSONBIN_CONFIG
 const JSONBIN_CONFIG = {
   get apiKey() { return CONFIG.apiKey; },
   get binId() { return CONFIG.binId; },
@@ -129,20 +126,20 @@ const JSONBIN_CONFIG_FOLGAS = {
 // ==================== FUNÇÕES DE UI ====================
 
 function showLoading(text = 'Processando...') {
-  const overlay = document.getElementById('loadingOverlay');
+  const overlay = document.getElementById('loadingOverlay') || document.getElementById('loading-overlay');
   if (overlay) {
-    const loadingText = document.getElementById('loadingText');
+    const loadingText = document.getElementById('loadingText') || document.getElementById('loading-message');
     if (loadingText) {
       loadingText.textContent = text;
     }
-    overlay.classList.add('show');
+    overlay.style.display = 'flex';
   }
 }
 
 function hideLoading() {
-  const overlay = document.getElementById('loadingOverlay');
+  const overlay = document.getElementById('loadingOverlay') || document.getElementById('loading-overlay');
   if (overlay) {
-    overlay.classList.remove('show');
+    overlay.style.display = 'none';
   }
 }
 
@@ -155,7 +152,7 @@ function showConfigStatus(type, message) {
   }
 }
 
-// ==================== CRIAR BANCO DE DADOS DE ESCALAS ====================
+// ==================== CRIAR BANCO DE DADOS ====================
 
 async function createDatabase() {
   const apiKey = document.getElementById('apiKey').value.trim();
@@ -226,11 +223,8 @@ async function createDatabase() {
       showConfigStatus('success', 
         `✅ Banco de dados de ESCALAS criado com sucesso!\n\n` +
         `Bin ID: ${binId}\n\n` +
-        `⚠️ IMPORTANTE PARA O ADMINISTRADOR:\n` +
-        `Copie este Bin ID e cole no arquivo js/config.js\n` +
-        `na linha: binId: '${binId}'\n\n` +
-        `Depois mude configured: true\n\n` +
-        `Assim todos os supervisores usarão o mesmo banco!`
+        `⚠️ IMPORTANTE: Adicione no config.js:\n` +
+        `binId: '${binId}'`
       );
       
       setTimeout(() => {
@@ -250,8 +244,7 @@ async function createDatabase() {
       showConfigStatus('error', 
         `❌ Erro ao criar banco:\n\n` +
         `Status: ${response.status}\n` +
-        `Mensagem: ${errorMsg}\n\n` +
-        `Verifique se a API Key está correta.`
+        `Mensagem: ${errorMsg}`
       );
     }
   } catch (error) {
@@ -259,8 +252,6 @@ async function createDatabase() {
     showConfigStatus('error', `❌ Erro de conexão:\n\n${error.message}`);
   }
 }
-
-// ==================== CRIAR BANCO DE DADOS DE FOLGAS ====================
 
 async function createDatabaseFolgas() {
   console.log('🔨 Iniciando criação do banco de FOLGAS...');
@@ -301,34 +292,22 @@ async function createDatabaseFolgas() {
       console.log('✅ Bin de FOLGAS criado com sucesso!');
       console.log('📋 Bin ID:', binId);
       
-      // Salvar configuração
       saveConfigFolgas(binId);
       
-      // Mostrar alerta com instruções
       alert(
-        `🎉 Banco de FOLGAS criado com sucesso!\n\n` +
+        `🎉 Banco de FOLGAS criado!\n\n` +
         `📋 Bin ID: ${binId}\n\n` +
-        `⚠️ IMPORTANTE PARA O ADMINISTRADOR:\n` +
-        `Copie este Bin ID e cole no arquivo js/config.js:\n\n` +
+        `⚠️ IMPORTANTE:\n` +
+        `Adicione no config.js:\n\n` +
         `CENTRAL_CONFIG_FOLGAS = {\n` +
-        `  apiKey: '${apiKey}',\n` +
         `  binId: '${binId}',\n` +
         `  configured: true\n` +
-        `};\n\n` +
-        `Depois recarregue a página.`
+        `};`
       );
       
       return binId;
     } else {
-      let errorMsg = 'Erro desconhecido';
-      try {
-        const error = JSON.parse(responseText);
-        errorMsg = error.message || JSON.stringify(error);
-      } catch (e) {
-        errorMsg = responseText;
-      }
-      console.error('❌ Erro ao criar bin:', errorMsg);
-      throw new Error(`Erro ${response.status}: ${errorMsg}`);
+      throw new Error(`Erro ${response.status}: ${responseText}`);
     }
   } catch (error) {
     console.error('❌ Erro ao criar banco de folgas:', error);
@@ -336,15 +315,13 @@ async function createDatabaseFolgas() {
   }
 }
 
-// ==================== TESTE DE CONEXÃO ====================
-
 async function testConnection() {
   if (!CONFIG.configured || !CONFIG.binId) {
     showConfigStatus('error', '❌ Configure o banco de dados primeiro!');
     return;
   }
 
-  showLoading('Testando conexão com ESCALAS...');
+  showLoading('Testando conexão...');
 
   try {
     const response = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.binId}/latest`, {
@@ -359,47 +336,21 @@ async function testConnection() {
       const result = await response.json();
       const count = result.record.escalas ? result.record.escalas.length : 0;
       showConfigStatus('success', 
-        `✅ Conexão OK com ESCALAS!\n\n` +
+        `✅ Conexão OK!\n\n` +
         `Bin ID: ${CONFIG.binId}\n` +
-        `Escalas salvas: ${count}\n` +
-        `Última atualização: ${result.record.lastUpdate || 'N/A'}\n\n` +
-        `Sistema funcionando perfeitamente!`
+        `Escalas salvas: ${count}`
       );
     } else {
-      showConfigStatus('error', 
-        `❌ Erro ao conectar:\n\n` +
-        `Status: ${response.status}\n\n` +
-        `Verifique se a API Key e Bin ID estão corretos.`
-      );
+      showConfigStatus('error', `❌ Erro ao conectar: ${response.status}`);
     }
   } catch (error) {
     hideLoading();
-    showConfigStatus('error', `❌ Erro de conexão:\n\n${error.message}`);
-  }
-}
-
-// ==================== RESET DE CONFIGURAÇÃO ====================
-
-function resetConfig() {
-  if (confirm(
-    '⚠️ ATENÇÃO: AÇÃO IRREVERSÍVEL!\n\n' +
-    'Isso irá APAGAR a configuração local.\n' +
-    'Os dados no JSONBin NÃO serão perdidos,\n' +
-    'mas você precisará reconfigurar o sistema.\n\n' +
-    'Deseja continuar?'
-  )) {
-    localStorage.removeItem(CONFIG_KEY);
-    localStorage.removeItem(CONFIG_KEY_FOLGAS);
-    CONFIG = { apiKey: '', binId: '', configured: false };
-    CONFIG_FOLGAS = { apiKey: '', binId: '', configured: false };
-    alert('✅ Configuração resetada!\n\nRecarregue a página para reconfigurar.');
-    location.reload();
+    showConfigStatus('error', `❌ Erro: ${error.message}`);
   }
 }
 
 // ==================== INICIALIZAÇÃO ====================
 
-// Carregar configurações ao iniciar
 loadConfig();
 loadConfigFolgas();
 
