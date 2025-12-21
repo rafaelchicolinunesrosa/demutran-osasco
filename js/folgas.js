@@ -1,3 +1,4 @@
+
 // ==================== VARIÁVEIS GLOBAIS ====================
 let folgas = [];
 let carregando = false;
@@ -705,8 +706,11 @@ function gerarPDFPlantao() {
             
             // Verificar se folga 1 está no mês selecionado
             if (folga.dataFolga1) {
-                const data1 = new Date(folga.dataFolga1);
-                if (data1.getMonth() === mes && data1.getFullYear() === ano) {
+                // CORREÇÃO: Ler a string da data diretamente para evitar problemas de fuso horário
+                const [anoF1, mesF1, diaF1] = folga.dataFolga1.split('-').map(Number);
+                
+                // mesF1 é 1-based, mes é 0-based
+                if ((mesF1 - 1) === mes && anoF1 === ano) {
                     folga1 = formatarDataBR(folga.dataFolga1);
                     temFolgaNoMes = true;
                 }
@@ -714,8 +718,10 @@ function gerarPDFPlantao() {
             
             // Verificar se folga 2 está no mês selecionado
             if (folga.dataFolga2) {
-                const data2 = new Date(folga.dataFolga2);
-                if (data2.getMonth() === mes && data2.getFullYear() === ano) {
+                // CORREÇÃO: Ler a string da data diretamente
+                const [anoF2, mesF2, diaF2] = folga.dataFolga2.split('-').map(Number);
+                
+                if ((mesF2 - 1) === mes && anoF2 === ano) {
                     folga2 = formatarDataBR(folga.dataFolga2);
                     temFolgaNoMes = true;
                 }
@@ -752,7 +758,7 @@ function gerarPDFPlantao() {
                 },
                 bodyStyles: {
                     fontSize: 10,
-                    minCellHeight: 12,
+                    minCellHeight: 8, // CORREÇÃO: Altura reduzida
                     font: 'helvetica'
                 },
                 columnStyles: {
@@ -762,7 +768,7 @@ function gerarPDFPlantao() {
                 },
                 margin: { left: 15, right: 15 },
                 styles: {
-                    cellPadding: 4,
+                    cellPadding: 2, // CORREÇÃO: Padding reduzido
                     font: 'helvetica'
                 }
             });
